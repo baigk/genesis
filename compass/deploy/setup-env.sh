@@ -1,5 +1,5 @@
 rm -rf compass-install
-git clone https://github.com/baigk/compass-core.git
+git clone https://github.com/baigk/compass-install.git
 cd compass-install
 
 function join { local IFS="$1"; shift; echo "$*"; }
