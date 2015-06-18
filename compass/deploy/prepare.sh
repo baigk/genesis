@@ -1,5 +1,5 @@
 sudo apt-get update -y
-sudo apt-get install git python-pip python-dev -y
+sudo apt-get install git python-pip python-dev expect -y
 vagrant --version
 if [[ $? != 0 ]]; then
     vagrant_pkg_url=https://dl.bintray.com/mitchellh/vagrant/vagrant_1.7.2_x86_64.deb
