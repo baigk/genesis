@@ -1,3 +1,4 @@
+ps -aux | grep vagrant | grep -v grep |awk '{print $2}' | xargs -n 1 sudo kill -9
 sudo apt-get update -y
 sudo apt-get install git python-pip python-dev expect -y
 vagrant --version
