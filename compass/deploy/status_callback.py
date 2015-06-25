@@ -22,10 +22,10 @@ import logging
 
 def task_error(host, data):
     logging.info("task_error: host=%s,data=%s" % (host, data))
-  
+
     if type(data) == dict:
         invocation = data.pop('invocation', {})
-   
+
     notify_host("localhost", host, "failed")
 
 class CallbackModule(object):
@@ -171,5 +171,4 @@ if __name__ == "__main__":
 
     host = sys.argv[1]
     status = sys.argv[2]
-    
     notify_host(host, status)

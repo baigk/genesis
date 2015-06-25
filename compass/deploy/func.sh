@@ -1,4 +1,3 @@
-#!/bin/bash
 function tear_down_machines() {
     virtmachines=$(sudo virsh list --name |grep pxe)
     for virtmachine in $virtmachines; do
@@ -21,5 +20,4 @@ function tear_down_machines() {
             exit 1
         fi
     done
-    #sudo vagrant destroy compass_nodocker
 }
