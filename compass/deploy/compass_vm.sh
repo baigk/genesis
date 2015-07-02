@@ -38,6 +38,7 @@ function wait_ok() {
         fi
     done
 
+    echo -ne "$greeos os install time used: 100%\r$reset"
     echo -e "$green wait_compass_ok exit $reset"
 }
 
