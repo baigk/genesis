@@ -42,9 +42,9 @@ function create_nets() {
     # create install network
     if [[ ! -z $VIRT_NUMBER ]];then
         echo "create nat network for install"
-        setup_om_bridge eth3 192.168.120.1 10.1.0.1/24 192.168.121.11/22
+        setup_om_bridge $OM_NIC $OM_GW $INSTALL_GW/24 $OM_IP
     else
-        setup_om_bridge eth3 192.168.120.1 10.1.0.1/24 192.168.121.11/22
+        setup_om_bridge $OM_NIC $OM_GW $INSTALL_GW/24 $OM_IP
     fi
 
 }
