@@ -4,8 +4,14 @@ function tear_down_machines() {
     do
         virsh destroy $i 1>/dev/null 2>/dev/null
         virsh undefine $i 1>/dev/null 2>/dev/null
-        rm -rf $host_vm_dir/$i
+        rm -rf $host_vm_dir/host$i
     done
+}
+
+function reboot_hosts() {
+     for i in host{0..4};do
+         virsh destroy $i;virsh start $i
+     done
 }
 
 function launch_host_vms() {
@@ -16,17 +22,24 @@ function launch_host_vms() {
     i=0
     for mac in $mac_array; do
         echo "creating vm disk for instance host${i}"
-        vm_dir=$host_vm_dir/$i
+        vm_dir=$host_vm_dir/host$i
         mkdir -p $vm_dir
         sudo qemu-img create -f raw $vm_dir/disk.img ${VIRT_DISK}
-        sudo virt-install --accelerate --hvm --connect qemu:///system \
-             --name host$i --ram=$VIRT_MEM --pxe --disk $vm_dir/disk.img,format=raw \
-             --vcpus=$VIRT_CPUS --graphics vnc,listen=0.0.0.0 --boot=hd,network \
-             --network=bridge:br_install,mac=$mac \
-             --network=bridge:br_install \
-             --network=bridge:br_install \
-             --network=bridge:br_install \
-             --noautoconsole --autostart --os-type=linux --os-variant=rhel6
+        # create vm xml
+     	sed -e "s/REPLACE_MEM/$VIRT_MEM/g" \
+     	   -e "s/REPLACE_CPU/$VIRT_CPUS/g" \
+     	   -e "s/REPLACE_NAME/host$i/g" \
+     	   -e "s#REPLACE_IMAGE#$vm_dir/disk.img#g" \
+     	   -e "s/REPLACE_BOOT_MAC/$mac/g" \
+     	   -e "s/REPLACE_BRIDGE_MGMT/br_install/g" \
+     	   -e "s/REPLACE_BRIDGE_TENANT/br_install/g" \
+     	   -e "s/REPLACE_BRIDGE_PUBLIC/br_install/g" \
+     	   -e "s/REPLACE_BRIDGE_STORAGE/br_install/g" \
+     	   $COMPASS_DIR/deploy/template/vm/host.xml\
+     	   > $vm_dir/libvirt.xml
+	
+        virsh define $vm_dir/libvirt.xml
+        virsh start host$i
         let i=i+1
     done
 }

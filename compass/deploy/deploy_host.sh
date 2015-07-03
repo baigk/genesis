@@ -14,7 +14,8 @@ function deploy_host(){
     sed -i "s|\$PythonHome|$VIRTUAL_ENV|g" bin/switch_virtualenv.py
     ssh -o "StrictHostKeyChecking no" -i $rsa_file root@${COMPASS_SERVER} mkdir -p /opt/compass/bin/ansible_callbacks
     scp -o "StrictHostKeyChecking no" -i $rsa_file -r ${COMPASS_DIR}/deploy/status_callback.py root@${COMPASS_SERVER}:/opt/compass/bin/ansible_callbacks/status_callback.py
-
+    
+    (sleep 15;reboot_hosts ) &
     bin/client.py --logfile= --loglevel=debug --logdir= --compass_server="${COMPASS_SERVER_URL}" \
     --compass_user_email="${COMPASS_USER_EMAIL}" --compass_user_password="${COMPASS_USER_PASSWORD}" \
     --cluster_name="${CLUSTER_NAME}" --language="${LANGUAGE}" --timezone="${TIMEZONE}" \

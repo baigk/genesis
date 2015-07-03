@@ -1,6 +1,9 @@
 function destroy_nets() {
     virsh net-destroy mgmt > /dev/null 2>&1
     virsh net-undefine mgmt > /dev/null 2>&1
+    
+    virsh net-destroy install > /dev/null 2>&1
+    virsh net-undefine install > /dev/null 2>&1
     rm -rf $COMPASS_DIR/deploy/work/network/*.xml
 }
 
@@ -23,6 +26,21 @@ function setup_om_bridge() {
     route add default gw $gw
 }
 
+function setup_om_nat() {
+    # create install network
+    sed -e "s/REPLACE_BRIDGE/br_install/g" \
+        -e "s/REPLACE_NAME/install/g" \
+        -e "s/REPLACE_GATEWAY/10.1.0.1/g" \
+        -e "s/REPLACE_MASK/255.255.255.0/g" \
+        -e "s/REPLACE_START/10.1.0.1/g" \
+        -e "s/REPLACE_END/10.1.0.254/g" \
+        $COMPASS_DIR/deploy/template/network/nat.xml \
+        > $WORK_DIR/network/install.xml
+    
+    virsh net-define $WORK_DIR/network/install.xml
+    virsh net-start install
+}
+
 function create_nets() {
     destroy_nets
     
@@ -42,9 +60,10 @@ function create_nets() {
     # create install network
     if [[ ! -z $VIRT_NUMBER ]];then
         echo "create nat network for install"
-        setup_om_bridge $OM_NIC $OM_GW $INSTALL_GW/24 $OM_IP
+        setup_om_nat
     else
-        setup_om_bridge $OM_NIC $OM_GW $INSTALL_GW/24 $OM_IP
+        setup_om_bridge eth3 192.168.120.1 10.1.0.1/24 192.168.121.11/22
     fi
 
 }
+

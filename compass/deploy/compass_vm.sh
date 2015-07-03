@@ -73,15 +73,22 @@ function launch_compass() {
         -e "s#REPLACE_IMAGE#$compass_vm_dir/disk.img#g" \
         -e "s#REPLACE_ISO#$compass_vm_dir/centos.iso#g" \
         -e "s/REPLACE_NET_MGMT/mgmt/g" \
-        -e "s/REPLACE_BRIDGE/br_install/g" \
+        -e "s/REPLACE_BRIDGE_INSTALL/br_install/g" \
         $COMPASS_DIR/deploy/template/vm/compass.xml \
         > $WORK_DIR/vm/compass/libvirt.xml
     
     virsh define $compass_vm_dir/libvirt.xml
     virsh start compass
     
-    wait_ok 300
-    install_compass_core
+    if ! wait_ok 300;then
+        echo "$red install os timeout $reset"
+        exit 1
+    fi
+
+    if ! install_compass_core;then
+        echo "$red install compass core failed $reset"
+        exit 1
+    fi
 
     echo -e "$green launch_compass enter $reset"
 }

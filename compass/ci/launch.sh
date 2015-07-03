@@ -2,7 +2,7 @@
 WORK_DIR=$COMPASS_DIR/ci/work
 
 reset=`tput sgr0`
-green=`tput setaf 4`
+blue=`tput setaf 4`
 red=`tput setaf 1`
 green=`tput setaf 2`
 
