@@ -15,12 +15,17 @@ function prepare_env() {
     mkdir -p $WORK_DIR/network
     mkdir -p $WORK_DIR/iso
 
-    # clone compass
-    git clone https://github.com/baigk/compass-core.git $WORK_DIR/installer/compass-core
-    git clone https://github.com/baigk/compass-install.git $WORK_DIR/installer/compass-install
-    virtualenv $WORK_DIR/installer/compass-core/venv
-    
     if [[ ! -f centos.iso ]];then
         wget -O $WORK_DIR/iso/centos.iso http://192.168.123.11:9999/xh/work/build/work/compass.iso
     fi
+
+    # copy compass
+    mkdir -p $WORK_DIR/mnt
+    mount -o loop $WORK_DIR/iso/centos.iso $WORK_DIR/mnt
+    cp -rf $WORK_DIR/mnt/compass/compass-core $WORK_DIR/installer/
+    cp -rf $WORK_DIR/mnt/compass/compass-install $WORK_DIR/installer/
+    umount $WORK_DIR/mnt
+    rm -rf $WORK_DIR/mnt
+
+    virtualenv $WORK_DIR/installer/compass-core/venv
 }

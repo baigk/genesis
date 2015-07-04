@@ -28,7 +28,7 @@ function wait_ok() {
     retry=0
     until timeout 1s ssh -o "StrictHostKeyChecking no" -i $rsa_file root@192.168.200.2 "exit" 2>/dev/null
     do
-        log_info "os install time used: $((retry*100/$1))%\r"
+        log_progress "os install time used: $((retry*100/$1))%"
         sleep 1
         let retry+=1
         if [[ $retry -ge $1 ]];then

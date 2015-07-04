@@ -15,3 +15,8 @@ function log_warn() {
 function log_error() {
     echo -e "${red}$*${reset}"
 }
+
+function log_progress() {
+    echo -en "${yellow}$*\r${reset}"
+}
+
