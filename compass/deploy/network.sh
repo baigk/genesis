@@ -59,7 +59,6 @@ function create_nets() {
     
     # create install network
     if [[ ! -z $VIRT_NUMBER ]];then
-        echo "create nat network for install"
         setup_om_nat
     else
         setup_om_bridge eth3 192.168.120.1 10.1.0.1/24 192.168.121.11/22

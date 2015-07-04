@@ -1,17 +1,13 @@
 #set -x
 WORK_DIR=$COMPASS_DIR/ci/work
 
-reset=`tput sgr0`
-blue=`tput setaf 4`
-red=`tput setaf 1`
-green=`tput setaf 2`
-
 if [[ $# -ge 1 ]];then
     CONF_NAME=$1
 else
     CONF_NAME=cluster
 fi
 
+source ${COMPASS_DIR}/ci/log.sh
 source ${COMPASS_DIR}/deploy/conf/${CONF_NAME}.conf
 source ${COMPASS_DIR}/deploy/prepare.sh
 source ${COMPASS_DIR}/deploy/network.sh
@@ -32,30 +28,30 @@ if ! prepare_env;then
     exit 1
 fi
 
-echo -e "$green########## get host mac begin ############# $reset"
+log_info "########## get host mac begin #############"
 machines=`get_host_macs`
 if [[ -z $machines ]];then
-    echo -e "$red get_host_macs failed $reset"
+    log_error "get_host_macs failed"
     exit 1
 fi
+
+log_info "deploy host macs: $machines"
 export machines
 
-echo -e "$green host macs: $machines $reset"
-
-echo -e "$green########## set up network begin ############# $reset"
+log_info "########## set up network begin #############"
 if ! create_nets;then
-    echo -e "$red create_nets failed $reset"
+    log_error "create_nets failed"
     exit 1
 fi
 
 if ! launch_compass;then
-    echo "launch_compass failed"
+    log_error "launch_compass failed"
     exit 1
 fi
 
 if [[ ! -z $VIRT_NUMBER ]];then
     if ! launch_host_vms;then
-        echo "launch_host_vms failed"
+        log_error "launch_host_vms failed"
         exit 1
     fi
 fi
@@ -68,5 +64,3 @@ else
     #tear_down_compass
     exit 0
 fi
-
-

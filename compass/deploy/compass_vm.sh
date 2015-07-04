@@ -10,36 +10,36 @@ function tear_down_compass() {
 
     rm -rf $compass_vm_dir
     
-    echo "tear_down_compass success!!!"
+    log_info "tear_down_compass success!!!"
 }
 
 function install_compass_core() {
     local inventory_file=$compass_vm_dir/inventory.file
-    echo -e "$green install_compass_core enter $reset"
+    log_info "install_compass_core enter"
     sed -i "s/mgmt_next_ip:.*/mgmt_next_ip: ${COMPASS_SERVER}/g" $WORK_DIR/installer/compass-install/install/group_vars/all
     echo "compass_nodocker ansible_ssh_host=192.168.200.2 ansible_ssh_port=22" > $inventory_file
-    PYTHONUNBUFFERED=1 ANSIBLE_FORCE_COLOR=true ANSIBLE_HOST_KEY_CHECKING=false ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=/dev/null -o ControlMaster=auto -o ControlPersist=60s' ansible-playbook --private-key=$rsa_file --user=root --connection=ssh --inventory-file=$inventory_file $WORK_DIR/installer/compass-install/install/compass_nodocker.yml
+    PYTHONUNBUFFERED=1 ANSIBLE_FORCE_COLOR=true ANSIBLE_HOST_KEY_CHECKING=false ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=/dev/null -o ControlMaster=auto -o ControlPersist=60s' ansible-playbook -e pipeline=true --private-key=$rsa_file --user=root --connection=ssh --inventory-file=$inventory_file $WORK_DIR/installer/compass-install/install/compass_nodocker.yml
     rm $inventory_file
-    echo -e "$green install_compass_core exit $reset"
+    log_info "install_compass_core exit"
 }
 
 function wait_ok() {
-    echo -e "$green wait_compass_ok enter $reset"
+    log_info "wait_compass_ok enter"
     retry=0
     until timeout 1s ssh -o "StrictHostKeyChecking no" -i $rsa_file root@192.168.200.2 "exit" 2>/dev/null
     do
-        echo -ne "$greeos os install time used: $((retry*100/$1))%\r$reset"
+        log_info "os install time used: $((retry*100/$1))%\r"
         sleep 1
         let retry+=1
-        if [[ $retry -gt $1 ]];then
-            echo "os install time out"
+        if [[ $retry -ge $1 ]];then
+            log_error "os install time out"
             tear_down_compass
             exit 1
         fi
     done
 
-    echo -ne "$greeos os install time used: 100%\r$reset"
-    echo -e "$green wait_compass_ok exit $reset"
+    log_warn "os install time used: 100%"
+    log_info "wait_compass_ok exit"
 }
 
 function launch_compass() {
@@ -48,7 +48,7 @@ function launch_compass() {
     local old_iso=$WORK_DIR/iso/centos.iso 
     local new_iso=$compass_vm_dir/centos.iso 
 
-    echo -e "$green launch_compass enter $reset"
+    log_info "launch_compass enter"
     tear_down_compass
 
     mkdir -p $compass_vm_dir $old_mnt
@@ -81,14 +81,14 @@ function launch_compass() {
     virsh start compass
     
     if ! wait_ok 300;then
-        echo "$red install os timeout $reset"
+        log_error "install os timeout"
         exit 1
     fi
 
     if ! install_compass_core;then
-        echo "$red install compass core failed $reset"
+        log_error "install compass core failed"
         exit 1
     fi
 
-    echo -e "$green launch_compass enter $reset"
+    log_info "launch_compass exit"
 }

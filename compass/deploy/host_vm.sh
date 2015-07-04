@@ -9,19 +9,17 @@ function tear_down_machines() {
 }
 
 function reboot_hosts() {
-     for i in host{0..4};do
-         virsh destroy $i;virsh start $i
-     done
+    log_warn "reboot_hosts do nothing"
 }
 
 function launch_host_vms() {
     tear_down_machines
     #function_bod
     mac_array=`echo $machines|sed 's/,/ /g'`
-    echo "bringing up pxe boot vms"
+    log_info "bringing up pxe boot vms"
     i=0
     for mac in $mac_array; do
-        echo "creating vm disk for instance host${i}"
+        log_info "creating vm disk for instance host${i}"
         vm_dir=$host_vm_dir/host$i
         mkdir -p $vm_dir
         sudo qemu-img create -f raw $vm_dir/disk.img ${VIRT_DISK}
