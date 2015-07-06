@@ -4,7 +4,9 @@ function prepare_env() {
     sudo apt-get install mkisofs
     sudo apt-get install git python-pip python-dev -y
     sudo apt-get install libxslt-dev libxml2-dev libvirt-dev build-essential qemu-utils qemu-kvm libvirt-bin virtinst libmysqld-dev -y
-    sudo pip install --upgrade ansible virtualenv
+    sudo pip install --upgrade pip
+    sudo pip install --upgrade ansible
+    sudo pip install --upgrade virtualenv
     sudo service libvirt-bin restart
    
     # prepare work dir
