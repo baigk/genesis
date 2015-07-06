@@ -2,7 +2,7 @@ function deploy_host(){
     cd $WORK_DIR/installer/compass-core
     source venv/bin/activate
 
-    pip install -i http://pypi.douban.com/simple -e .
+    pip install -i http://pypi.douban.com/simple -e . --trusted-host pypi.douban.com
 
     sudo mkdir -p /var/log/compass
     sudo chown -R 777 /var/log/compass
