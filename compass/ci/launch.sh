@@ -48,7 +48,6 @@ if ! launch_compass;then
     log_error "launch_compass failed"
     exit 1
 fi
-
 if [[ ! -z $VIRT_NUMBER ]];then
     if ! launch_host_vms;then
         log_error "launch_host_vms failed"

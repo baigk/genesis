@@ -1,6 +1,6 @@
 compass_vm_dir=$WORK_DIR/vm/compass
 rsa_file=$compass_vm_dir/boot.rsa
-
+ssh_args="-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $rsa_file"
 function tear_down_compass() {
     virsh destroy compass > /dev/null 2>&1
     virsh undefine compass > /dev/null 2>&1
@@ -26,7 +26,7 @@ function install_compass_core() {
 function wait_ok() {
     log_info "wait_compass_ok enter"
     retry=0
-    until timeout 1s ssh -o "StrictHostKeyChecking no" -i $rsa_file root@192.168.200.2 "exit" 2>/dev/null
+    until timeout 1s ssh $ssh_args root@192.168.200.2 "exit" 2>/dev/null
     do
         log_progress "os install time used: $((retry*100/$1))%"
         sleep 1
@@ -61,7 +61,8 @@ function launch_compass() {
     ssh-keygen -f $new_mnt/bootstrap/boot.rsa -t rsa -N ''
     cp $new_mnt/bootstrap/boot.rsa $rsa_file
 
-    mkisofs -o $new_iso -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -R -J -v -T $new_mnt
+    rm -rf $new_mnt/.rr_moved $new_mnt/rr_moved
+    mkisofs -quiet -r -J -R -b isolinux/isolinux.bin  -no-emul-boot -boot-load-size 4 -boot-info-table -hide-rr-moved -x "lost+found:" -o $new_iso $new_mnt
 
     rm -rf $old_mnt $new_mnt
     
