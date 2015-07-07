@@ -58,17 +58,17 @@ function launch_compass() {
     set -e
     mkdir -p $compass_vm_dir $old_mnt
     sudo mount -o loop $old_iso $old_mnt
-    cp -rf $old_mnt $new_mnt
-    chmod 755 -R $new_mnt
+    cd $old_mnt;find .|cpio -pd $new_mnt;cd -
     sudo umount $old_mnt
 
+    chmod 755 -R $new_mnt
     sed -i -e "s/REPLACE_MGMT_IP/192.168.200.2/g" -e "s/REPLACE_MGMT_NETMASK/255.255.252.0/g" -e "s/REPLACE_INSTALL_IP/$COMPASS_SERVER/g" -e "s/REPLACE_INSTALL_NETMASK/255.255.255.0/g" -e "s/REPLACE_GW/192.168.200.1/g" $new_mnt/isolinux/isolinux.cfg
    
-    sudo ssh-keygen -f $new_mnt/bootstrap/boot.rsa -t rsa -N ''
+    ssh-keygen -f $new_mnt/bootstrap/boot.rsa -t rsa -N ''
     cp $new_mnt/bootstrap/boot.rsa $rsa_file
 
     rm -rf $new_mnt/.rr_moved $new_mnt/rr_moved
-    sudo mkisofs -quiet -r -J -R -b isolinux/isolinux.bin  -no-emul-boot -boot-load-size 4 -boot-info-table -hide-rr-moved -x "lost+found:" -o $new_iso $new_mnt
+    mkisofs -quiet -r -J -R -b isolinux/isolinux.bin  -no-emul-boot -boot-load-size 4 -boot-info-table -hide-rr-moved -x "lost+found:" -o $new_iso $new_mnt
 
     rm -rf $old_mnt $new_mnt
     
