@@ -58,8 +58,8 @@ function launch_compass() {
     set -e
     mkdir -p $compass_vm_dir $old_mnt
     sudo mount -o loop $old_iso $old_mnt
-    
     cd $old_mnt;find .|cpio -pd $new_mnt;cd -
+
     sudo umount $old_mnt
 
     chmod 755 -R $new_mnt
