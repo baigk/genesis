@@ -8,7 +8,7 @@ function tear_down_compass() {
     sudo umount $compass_vm_dir/old > /dev/null 2>&1
     sudo umount $compass_vm_dir/new > /dev/null 2>&1
 
-    rm -rf $compass_vm_dir
+    sudo rm -rf $compass_vm_dir
     
     log_info "tear_down_compass success!!!"
 }
@@ -22,7 +22,9 @@ function install_compass_core() {
     exit_status=$?
     rm $inventory_file
     log_info "install_compass_core exit"
-    exit $exit_status
+    if [[ $exit_status != 0 ]];then
+        /bin/false
+    fi
 }
 
 function wait_ok() {
@@ -57,6 +59,7 @@ function launch_compass() {
     mkdir -p $compass_vm_dir $old_mnt
     sudo mount -o loop $old_iso $old_mnt
     cp -rf $old_mnt $new_mnt
+    chmod 755 -R $new_mnt
     sudo umount $old_mnt
 
     sed -i -e "s/REPLACE_MGMT_IP/192.168.200.2/g" -e "s/REPLACE_MGMT_NETMASK/255.255.252.0/g" -e "s/REPLACE_INSTALL_IP/$COMPASS_SERVER/g" -e "s/REPLACE_INSTALL_NETMASK/255.255.255.0/g" -e "s/REPLACE_GW/192.168.200.1/g" $new_mnt/isolinux/isolinux.cfg

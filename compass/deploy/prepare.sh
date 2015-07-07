@@ -10,7 +10,7 @@ function prepare_env() {
     sudo service libvirt-bin restart
    
     # prepare work dir
-    rm -rf $WORK_DIR
+    sudo rm -rf $WORK_DIR
     mkdir -p $WORK_DIR
     mkdir -p $WORK_DIR/installer
     mkdir -p $WORK_DIR/vm
@@ -23,11 +23,12 @@ function prepare_env() {
 
     # copy compass
     mkdir -p $WORK_DIR/mnt
-    mount -o loop $WORK_DIR/iso/centos.iso $WORK_DIR/mnt
+    sudo mount -o loop $WORK_DIR/iso/centos.iso $WORK_DIR/mnt
     cp -rf $WORK_DIR/mnt/compass/compass-core $WORK_DIR/installer/
     cp -rf $WORK_DIR/mnt/compass/compass-install $WORK_DIR/installer/
-    umount $WORK_DIR/mnt
+    sudo umount $WORK_DIR/mnt
     rm -rf $WORK_DIR/mnt
 
+    chmod 755 $WORK_DIR -R
     virtualenv $WORK_DIR/installer/compass-core/venv
 }
