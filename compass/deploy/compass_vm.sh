@@ -19,8 +19,10 @@ function install_compass_core() {
     sed -i "s/mgmt_next_ip:.*/mgmt_next_ip: ${COMPASS_SERVER}/g" $WORK_DIR/installer/compass-install/install/group_vars/all
     echo "compass_nodocker ansible_ssh_host=192.168.200.2 ansible_ssh_port=22" > $inventory_file
     PYTHONUNBUFFERED=1 ANSIBLE_FORCE_COLOR=true ANSIBLE_HOST_KEY_CHECKING=false ANSIBLE_SSH_ARGS='-o UserKnownHostsFile=/dev/null -o ControlMaster=auto -o ControlPersist=60s' ansible-playbook -e pipeline=true --private-key=$rsa_file --user=root --connection=ssh --inventory-file=$inventory_file $WORK_DIR/installer/compass-install/install/compass_nodocker.yml
+    exit_status=$?
     rm $inventory_file
     log_info "install_compass_core exit"
+    exit $exit_status
 }
 
 function wait_ok() {
@@ -50,19 +52,20 @@ function launch_compass() {
 
     log_info "launch_compass enter"
     tear_down_compass
-
+    
+    set -e
     mkdir -p $compass_vm_dir $old_mnt
-    mount -o loop $old_iso $old_mnt
+    sudo mount -o loop $old_iso $old_mnt
     cp -rf $old_mnt $new_mnt
-    umount $old_mnt
+    sudo umount $old_mnt
 
     sed -i -e "s/REPLACE_MGMT_IP/192.168.200.2/g" -e "s/REPLACE_MGMT_NETMASK/255.255.252.0/g" -e "s/REPLACE_INSTALL_IP/$COMPASS_SERVER/g" -e "s/REPLACE_INSTALL_NETMASK/255.255.255.0/g" -e "s/REPLACE_GW/192.168.200.1/g" $new_mnt/isolinux/isolinux.cfg
    
-    ssh-keygen -f $new_mnt/bootstrap/boot.rsa -t rsa -N ''
+    sudo ssh-keygen -f $new_mnt/bootstrap/boot.rsa -t rsa -N ''
     cp $new_mnt/bootstrap/boot.rsa $rsa_file
 
     rm -rf $new_mnt/.rr_moved $new_mnt/rr_moved
-    mkisofs -quiet -r -J -R -b isolinux/isolinux.bin  -no-emul-boot -boot-load-size 4 -boot-info-table -hide-rr-moved -x "lost+found:" -o $new_iso $new_mnt
+    sudo mkisofs -quiet -r -J -R -b isolinux/isolinux.bin  -no-emul-boot -boot-load-size 4 -boot-info-table -hide-rr-moved -x "lost+found:" -o $new_iso $new_mnt
 
     rm -rf $old_mnt $new_mnt
     
@@ -90,6 +93,7 @@ function launch_compass() {
         log_error "install compass core failed"
         exit 1
     fi
-
+    
+    set +e
     log_info "launch_compass exit"
 }
