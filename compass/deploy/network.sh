@@ -1,9 +1,9 @@
 function destroy_nets() {
-    virsh net-destroy mgmt > /dev/null 2>&1
-    virsh net-undefine mgmt > /dev/null 2>&1
+    sudo virsh net-destroy mgmt > /dev/null 2>&1
+    sudo virsh net-undefine mgmt > /dev/null 2>&1
     
-    virsh net-destroy install > /dev/null 2>&1
-    virsh net-undefine install > /dev/null 2>&1
+    sudo virsh net-destroy install > /dev/null 2>&1
+    sudo virsh net-undefine install > /dev/null 2>&1
     rm -rf $COMPASS_DIR/deploy/work/network/*.xml
 }
 
@@ -37,8 +37,8 @@ function setup_om_nat() {
         $COMPASS_DIR/deploy/template/network/nat.xml \
         > $WORK_DIR/network/install.xml
     
-    virsh net-define $WORK_DIR/network/install.xml
-    virsh net-start install
+    sudo virsh net-define $WORK_DIR/network/install.xml
+    sudo virsh net-start install
 }
 
 function create_nets() {
@@ -54,8 +54,8 @@ function create_nets() {
         $COMPASS_DIR/deploy/template/network/nat.xml \
         > $WORK_DIR/network/mgmt.xml
     
-    virsh net-define $WORK_DIR/network/mgmt.xml
-    virsh net-start mgmt
+    sudo virsh net-define $WORK_DIR/network/mgmt.xml
+    sudo virsh net-start mgmt
     
     # create install network
     if [[ ! -z $VIRT_NUMBER ]];then

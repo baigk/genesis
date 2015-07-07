@@ -2,8 +2,8 @@ host_vm_dir=$WORK_DIR/vm
 function tear_down_machines() {
     for i in host{0..4}
     do
-        virsh destroy $i 1>/dev/null 2>/dev/null
-        virsh undefine $i 1>/dev/null 2>/dev/null
+        sudo virsh destroy $i 1>/dev/null 2>/dev/null
+        sudo virsh undefine $i 1>/dev/null 2>/dev/null
         rm -rf $host_vm_dir/host$i
     done
 }
@@ -36,8 +36,8 @@ function launch_host_vms() {
      	   $COMPASS_DIR/deploy/template/vm/host.xml\
      	   > $vm_dir/libvirt.xml
 	
-        virsh define $vm_dir/libvirt.xml
-        virsh start host$i
+        sudo virsh define $vm_dir/libvirt.xml
+        sudo virsh start host$i
         let i=i+1
     done
 }

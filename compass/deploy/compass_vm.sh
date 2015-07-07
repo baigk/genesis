@@ -2,8 +2,8 @@ compass_vm_dir=$WORK_DIR/vm/compass
 rsa_file=$compass_vm_dir/boot.rsa
 ssh_args="-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i $rsa_file"
 function tear_down_compass() {
-    virsh destroy compass > /dev/null 2>&1
-    virsh undefine compass > /dev/null 2>&1
+    sudo virsh destroy compass > /dev/null 2>&1
+    sudo virsh undefine compass > /dev/null 2>&1
 
     umount $compass_vm_dir/old > /dev/null 2>&1
     umount $compass_vm_dir/new > /dev/null 2>&1
@@ -78,8 +78,8 @@ function launch_compass() {
         $COMPASS_DIR/deploy/template/vm/compass.xml \
         > $WORK_DIR/vm/compass/libvirt.xml
     
-    virsh define $compass_vm_dir/libvirt.xml
-    virsh start compass
+    sudo virsh define $compass_vm_dir/libvirt.xml
+    sudo virsh start compass
     
     if ! wait_ok 300;then
         log_error "install os timeout"
