@@ -5,10 +5,10 @@ function tear_down_compass() {
     sudo virsh destroy compass > /dev/null 2>&1
     sudo virsh undefine compass > /dev/null 2>&1
 
-    umount $compass_vm_dir/old > /dev/null 2>&1
-    umount $compass_vm_dir/new > /dev/null 2>&1
+    sudo umount $compass_vm_dir/old > /dev/null 2>&1
+    sudo umount $compass_vm_dir/new > /dev/null 2>&1
 
-    rm -rf $compass_vm_dir
+    sudo rm -rf $compass_vm_dir
     
     log_info "tear_down_compass success!!!"
 }
@@ -22,7 +22,9 @@ function install_compass_core() {
     exit_status=$?
     rm $inventory_file
     log_info "install_compass_core exit"
-    exit $exit_status
+    if [[ $exit_status != 0 ]];then
+        /bin/false
+    fi
 }
 
 function wait_ok() {
@@ -56,10 +58,12 @@ function launch_compass() {
     set -e
     mkdir -p $compass_vm_dir $old_mnt
     sudo mount -o loop $old_iso $old_mnt
-    cp -rf $old_mnt $new_mnt
+    
+    cd $old_mnt;find .|cpio -pd $new_mnt;cd -
     sudo umount $old_mnt
 
-    sed -i -e "s/REPLACE_MGMT_IP/$MGMT_IP/g" -e "s/REPLACE_MGMT_NETMASK/$MGMT_MASK/g" -e "s/REPLACE_INSTALL_IP/$COMPASS_SERVER/g" -e "s/REPLACE_INSTALL_NETMASK/255.255.255.0/g" -e "s/REPLACE_GW/$MGMT_GW/g" $new_mnt/isolinux/isolinux.cfg
+    chmod 755 -R $new_mnt
+    sed -i -e "s/REPLACE_MGMT_IP/$MGMT_IP/g" -e "s/REPLACE_MGMT_NETMASK/$MGMT_MASK/g" -e "s/REPLACE_INSTALL_IP/$COMPASS_SERVER/g" -e "s/REPLACE_INSTALL_NETMASK/$INSTALL_MASK/g" -e "s/REPLACE_GW/$MGMT_GW/g" $new_mnt/isolinux/isolinux.cfg
    
     sudo ssh-keygen -f $new_mnt/bootstrap/boot.rsa -t rsa -N ''
     cp $new_mnt/bootstrap/boot.rsa $rsa_file
