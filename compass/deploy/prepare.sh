@@ -1,7 +1,7 @@
 function prepare_env() {
     export PYTHONPATH=/usr/lib/python2.7/dist-packages:/usr/local/lib/python2.7/dist-packages
     sudo apt-get update -y
-    sudo apt-get install mkisofs
+    sudo apt-get install mkisofs bc
     sudo apt-get install git python-pip python-dev -y
     sudo apt-get install libxslt-dev libxml2-dev libvirt-dev build-essential qemu-utils qemu-kvm libvirt-bin virtinst libmysqld-dev -y
     sudo pip install --upgrade pip
@@ -19,7 +19,7 @@ function prepare_env() {
     mkdir -p $WORK_DIR/venv
 
     if [[ ! -f centos.iso ]];then
-        wget -O $WORK_DIR/iso/centos.iso http://192.168.123.11:9999/xh/work/build/work/compass.iso
+        wget -O $WORK_DIR/iso/centos.iso $ISO_URL
     fi
 
     # copy compass
