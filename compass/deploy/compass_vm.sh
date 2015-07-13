@@ -37,7 +37,6 @@ function wait_ok() {
         let retry+=1
         if [[ $retry -ge $1 ]];then
             log_error "os install time out"
-            tear_down_compass
             exit 1
         fi
     done
@@ -65,7 +64,7 @@ function launch_compass() {
     chmod 755 -R $new_mnt
     sed -i -e "s/REPLACE_MGMT_IP/$MGMT_IP/g" -e "s/REPLACE_MGMT_NETMASK/$MGMT_MASK/g" -e "s/REPLACE_INSTALL_IP/$COMPASS_SERVER/g" -e "s/REPLACE_INSTALL_NETMASK/$INSTALL_MASK/g" -e "s/REPLACE_GW/$MGMT_GW/g" $new_mnt/isolinux/isolinux.cfg
    
-    sudo ssh-keygen -f $new_mnt/bootstrap/boot.rsa -t rsa -N ''
+    ssh-keygen -f $new_mnt/bootstrap/boot.rsa -t rsa -N ''
     cp $new_mnt/bootstrap/boot.rsa $rsa_file
 
     rm -rf $new_mnt/.rr_moved $new_mnt/rr_moved
