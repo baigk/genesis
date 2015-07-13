@@ -16,6 +16,7 @@ function prepare_env() {
     mkdir -p $WORK_DIR/vm
     mkdir -p $WORK_DIR/network
     mkdir -p $WORK_DIR/iso
+    mkdir -p $WORK_DIR/venv
 
     if [[ ! -f centos.iso ]];then
         wget -O $WORK_DIR/iso/centos.iso $ISO_URL
@@ -30,5 +31,5 @@ function prepare_env() {
     rm -rf $WORK_DIR/mnt
 
     chmod 755 $WORK_DIR -R
-    virtualenv $WORK_DIR/installer/compass-core/venv
+    virtualenv $WORK_DIR/venv
 }

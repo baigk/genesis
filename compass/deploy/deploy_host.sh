@@ -1,6 +1,6 @@
 function deploy_host(){
     cd $WORK_DIR/installer/compass-core
-    source venv/bin/activate
+    source $WORK_DIR/venv/bin/activate
     if pip --help | grep -q trusted; then
         pip install -i http://pypi.douban.com/simple -e . --trusted-host pypi.douban.com
     else
