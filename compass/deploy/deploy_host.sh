@@ -18,7 +18,8 @@ function deploy_host(){
     ssh $ssh_args root@${COMPASS_SERVER} mkdir -p /opt/compass/bin/ansible_callbacks
     scp $ssh_args -r ${COMPASS_DIR}/deploy/status_callback.py root@${COMPASS_SERVER}:/opt/compass/bin/ansible_callbacks/status_callback.py
     
-    (sleep 15;reboot_hosts ) &
+    reboot_hosts
+
     bin/client.py --logfile= --loglevel=debug --logdir= --compass_server="${COMPASS_SERVER_URL}" \
     --compass_user_email="${COMPASS_USER_EMAIL}" --compass_user_password="${COMPASS_USER_PASSWORD}" \
     --cluster_name="${CLUSTER_NAME}" --language="${LANGUAGE}" --timezone="${TIMEZONE}" \

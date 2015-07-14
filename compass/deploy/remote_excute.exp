@@ -1,9 +1,12 @@
 #!/usr/bin/expect
 
-set command [lindex $argv 0]
-set passwd [lindex $argv 1]
+set addr [lindex $argv 0]
+set user [lindex $argv 1]
+set passwd [lindex $argv 2]
+set command [lindex $argv 3]
+set cmd_prompt "]#|~]?"
 
-eval spawn "$command"
+eval spawn ssh $user@$addr
 set timeout 60
 
 expect {
@@ -15,9 +18,18 @@ expect {
 
     -re ".*sword:" {
         exp_send "$passwd\r"
-
+        exp_continue
     }
-
+    -re $cmd_prompt {
+        exp_send "$command\r"
+    }
 }
 
-interact
+exec sleep 1
+
+expect {
+    -re $cmd_prompt {
+        send "exit\r"
+    }
+}
+send "exit 1\r"
