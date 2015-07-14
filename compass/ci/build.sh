@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ex
 WORK_DIR=`cd ${BASH_SOURCE[0]%/*};pwd`/work
-rm -rf $WORK_DIR
+sudo rm -rf $WORK_DIR
 mkdir -p $WORK_DIR
 PACKAGE_URL=http://192.168.127.11:9999/xh/work/package
 
@@ -18,9 +18,10 @@ wget -O Ubuntu-14.04-x86_64.iso $PACKAGE_URL/Ubuntu-14.04-x86_64.iso
 
 # mount base iso
 mkdir -p base
-mount -o loop centos_base.iso base
+sudo mount -o loop centos_base.iso base
 cd base;find .|cpio -pd ../new;cd -
-umount base
+sudo umount base
+chmod 755 ./new -R
 
 # main process
 mkdir -p new/repos new/compass new/bootstrap new/pip new/guestimg
@@ -38,9 +39,8 @@ find . -name ".git" |xargs rm -rf
 
 cd $WORK_DIR
 wget -O new/isolinux/ks.cfg $PACKAGE_URL/ks.cfg
-#mkisofs -o compass.iso -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -R -J -v -T new
 rm -rf new/.rr_moved
-mkisofs -quiet -r -J -R -b isolinux/isolinux.bin  -no-emul-boot -boot-load-size 4 -boot-info-table -hide-rr-moved -x "lost+found:" -o compass.iso new/
+sudo mkisofs -quiet -r -J -R -b isolinux/isolinux.bin  -no-emul-boot -boot-load-size 4 -boot-info-table -hide-rr-moved -x "lost+found:" -o compass.iso new/
 
 # delete tmp file
-rm -rf new base ubuntu_ppa.tar.gz centos_base.iso Ubuntu-14.04-x86_64.iso
+sudo rm -rf new base ubuntu_ppa.tar.gz centos_base.iso Ubuntu-14.04-x86_64.iso
