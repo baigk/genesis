@@ -1,6 +1,7 @@
 #!/bin/bash
 set -ex
-WORK_DIR=`cd ${BASH_SOURCE[0]%/*};pwd`/work
+SCRIPT_DIR=`cd ${BASH_SOURCE[0]%/*};pwd`
+WORK_DIR=$SCRIPT_DIR/work
 sudo rm -rf $WORK_DIR
 mkdir -p $WORK_DIR
 PACKAGE_URL=http://192.168.127.11:9999/xh/work/package
@@ -31,14 +32,14 @@ wget -O new/guestimg/cirros-0.3.3-x86_64-disk.img $PACKAGE_URL/cirros-0.3.3-x86_
 wget -O new/pip/pexpect-3.3.tar.gz https://pypi.python.org/packages/source/p/pexpect/pexpect-3.3.tar.gz#md5=0de72541d3f1374b795472fed841dce8
 
 cd new/compass
-git clone https://github.com/baigk/compass-core.git
-git clone https://github.com/baigk/compass-install.git
-git clone https://github.com/baigk/compass-adapters.git
-git clone https://github.com/baigk/compass-web.git
+git clone http://192.168.127.11/compass-core.git
+git clone http://192.168.127.11/compass-install.git
+git clone http://192.168.127.11/compass-adapters.git
+git clone http://192.168.127.11/compass-web.git
 find . -name ".git" |xargs rm -rf
 
 cd $WORK_DIR
-wget -O new/isolinux/ks.cfg $PACKAGE_URL/ks.cfg
+cp -rf $SCRIPT_DIR/ks.cfg new/isolinux/ks.cfg
 rm -rf new/.rr_moved
 sudo mkisofs -quiet -r -J -R -b isolinux/isolinux.bin  -no-emul-boot -boot-load-size 4 -boot-info-table -hide-rr-moved -x "lost+found:" -o compass.iso new/
 
