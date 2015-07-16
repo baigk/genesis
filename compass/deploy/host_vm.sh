@@ -1,10 +1,9 @@
 host_vm_dir=$WORK_DIR/vm
 function tear_down_machines() {
-    for i in host{0..4}
-    do
-        sudo virsh destroy $i 1>/dev/null 2>/dev/null
-        sudo virsh undefine $i 1>/dev/null 2>/dev/null
-        rm -rf $host_vm_dir/host$i
+    for i in $HOSTNAMES; do
+        sudo virsh destroy $i
+        sudo virsh undefine $i
+        rm -rf $host_vm_dir/$i
     done
 }
 
@@ -13,33 +12,36 @@ function reboot_hosts() {
 }
 
 function launch_host_vms() {
+    old_ifs=$IFS
+    IFS=,
     tear_down_machines
     #function_bod
-    mac_array=`echo $machines|sed 's/,/ /g'`
+    mac_array=($machines)
     log_info "bringing up pxe boot vms"
     i=0
-    for mac in $mac_array; do
-        log_info "creating vm disk for instance host${i}"
-        vm_dir=$host_vm_dir/host$i
+    for host in $HOSTNAMES; do
+        log_info "creating vm disk for instance $host"
+        vm_dir=$host_vm_dir/$host
         mkdir -p $vm_dir
         sudo qemu-img create -f raw $vm_dir/disk.img ${VIRT_DISK}
         # create vm xml
      	sed -e "s/REPLACE_MEM/$VIRT_MEM/g" \
-     	   -e "s/REPLACE_CPU/$VIRT_CPUS/g" \
-     	   -e "s/REPLACE_NAME/host$i/g" \
-     	   -e "s#REPLACE_IMAGE#$vm_dir/disk.img#g" \
-     	   -e "s/REPLACE_BOOT_MAC/$mac/g" \
-     	   -e "s/REPLACE_BRIDGE_MGMT/br_install/g" \
-     	   -e "s/REPLACE_BRIDGE_TENANT/br_install/g" \
-     	   -e "s/REPLACE_BRIDGE_PUBLIC/br_install/g" \
-     	   -e "s/REPLACE_BRIDGE_STORAGE/br_install/g" \
-     	   $COMPASS_DIR/deploy/template/vm/host.xml\
-     	   > $vm_dir/libvirt.xml
+          -e "s/REPLACE_CPU/$VIRT_CPUS/g" \
+          -e "s/REPLACE_NAME/$host/g" \
+          -e "s#REPLACE_IMAGE#$vm_dir/disk.img#g" \
+          -e "s/REPLACE_BOOT_MAC/${mac_array[i]}/g" \
+          -e "s/REPLACE_BRIDGE_MGMT/br_install/g" \
+          -e "s/REPLACE_BRIDGE_TENANT/br_install/g" \
+          -e "s/REPLACE_BRIDGE_PUBLIC/br_install/g" \
+          -e "s/REPLACE_BRIDGE_STORAGE/br_install/g" \
+          $COMPASS_DIR/deploy/template/vm/host.xml\
+          > $vm_dir/libvirt.xml
 	
         sudo virsh define $vm_dir/libvirt.xml
-        sudo virsh start host$i
+        sudo virsh start $host
         let i=i+1
     done
+    IFS=$old_ifs
 }
 
 function get_host_macs() {
@@ -53,7 +55,7 @@ function get_host_macs() {
 
     echo "test: true" >> $config_file
     echo "pxe_boot_macs: [${machines}]" >> $config_file
-    
+
     echo $machines
 }
 
