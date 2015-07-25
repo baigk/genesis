@@ -25,6 +25,7 @@ wget -O centos_7_1_common_ppa_repo.tar.gz $PACKAGE_URL/centos_7_1_common_ppa_rep
 # get centos openstack ppa package
 wget -O centos_7_1_openstack_juno_ppa_repo.tar.gz $PACKAGE_URL/centos_7_1_openstack_juno_ppa_repo.tar.gz
 
+wget -O loaders.tar.gz $PACKAGE_URL/loaders.tar.gz
 # mount base iso
 mkdir -p base
 sudo mount -o loop centos_base.iso base
@@ -38,7 +39,8 @@ cp ubuntu_ppa.tar.gz new/repos
 cp Ubuntu-14.04-x86_64.iso new/repos
 cp CentOS-7-x86_64-Minimal-1503-01.iso new/repos
 cp centos_7_1_common_ppa_repo.tar.gz new/repos
-cp centos_7_1_openstack_juno_ppa_repo.tar.gz new/repos 
+cp centos_7_1_openstack_juno_ppa_repo.tar.gz new/repos
+cp loaders.tar.gz new
 wget -O new/guestimg/cirros-0.3.3-x86_64-disk.img $PACKAGE_URL/cirros-0.3.3-x86_64-disk.img
 wget -O new/pip/pexpect-3.3.tar.gz https://pypi.python.org/packages/source/p/pexpect/pexpect-3.3.tar.gz#md5=0de72541d3f1374b795472fed841dce8
 
