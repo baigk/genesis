@@ -56,7 +56,7 @@ cp /home/source/compass-web ./ -rf
 find . -name ".git" |xargs rm -rf
 
 cd $WORK_DIR
-wget -O new/isolinux/ks.cfg $PACKAGE_URL/ks.cfg
+cp -rf $SCRIPT_DIR/ks.cfg new/isolinux/ks.cfg
 rm -rf new/.rr_moved
 sudo mkisofs -quiet -r -J -R -b isolinux/isolinux.bin  -no-emul-boot -boot-load-size 4 -boot-info-table -hide-rr-moved -x "lost+found:" -o compass.iso new/
 
