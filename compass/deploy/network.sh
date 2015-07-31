@@ -1,29 +1,33 @@
 function destroy_nets() {
-    sudo virsh net-destroy mgmt > /dev/null 2>&1
-    sudo virsh net-undefine mgmt > /dev/null 2>&1
-    
-    sudo virsh net-destroy install > /dev/null 2>&1
-    sudo virsh net-undefine install > /dev/null 2>&1
+    sudo virsh net-destroy mgmt  2>&1
+    sudo virsh net-undefine mgmt 2>&1
+    sudo virsh net-destroy install  2>&1
+    sudo virsh net-undefine install  2>&1
     rm -rf $COMPASS_DIR/deploy/work/network/*.xml
 }
 
 function setup_om_bridge() {
-    local device=$1
-    local gw=$2
+
+    ips=$(ip addr show $OM_NIC | grep 'inet ' | awk -F' ' '{print $2}')
+
     ip link set br_install down
-    ip addr flush $device
+    ip addr flush $OM_NIC
     brctl delbr br_install
 
     brctl addbr br_install
-    brctl addif br_install $device
+    brctl addif br_install $OM_NIC
     ip link set br_install up
 
-    shift;shift
-    for ip in $*;do
+    for ip in $ips; do
         ip addr add $ip dev br_install
     done
 
-    route add default gw $gw
+    mask=`echo $INSTALL_MASK | awk -F'.' '{print ($1*(2^24)+$2*(2^16)+$3*(2^8)+$4)}'`
+    mask_len=`echo "obase=2;${mask}"|bc|awk -F'0' '{print length($1)}'`
+    ip addr add $INSTALL_GW/$mask_len dev br_install
+    if [[ -n "$OM_GW" ]]; then
+        route add default gw $OM_GW
+    fi
 }
 
 function setup_om_nat() {
@@ -39,6 +43,10 @@ function setup_om_nat() {
     
     sudo virsh net-define $WORK_DIR/network/install.xml
     sudo virsh net-start install
+}
+
+function setup_ipmi_net(){
+    ip addr add $CONSOLE_IPMI_IP dev $CONSOLE_IPMI_NIC
 }
 
 function create_nets() {
@@ -61,10 +69,8 @@ function create_nets() {
     if [[ ! -z $VIRT_NUMBER ]];then
         setup_om_nat
     else
-        mask=`echo $INSTALL_MASK | awk -F'.' '{print ($1*(2^24)+$2*(2^16)+$3*(2^8)+$4)}'`
-        mask_len=`echo "obase=2;${mask}"|bc|awk -F'0' '{print length($1)}'`
-        setup_om_bridge $OM_NIC $OM_GW $INSTALL_GW/$mask_len $OM_IP
+        setup_ipmi_net
+        setup_om_bridge
     fi
-
 }
 

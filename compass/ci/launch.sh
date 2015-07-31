@@ -1,26 +1,21 @@
 #set -x
-WORK_DIR=$COMPASS_DIR/ci/work
 
-if [[ $# -ge 1 ]];then
-    CONF_NAME=$1
-else
-    CONF_NAME=cluster
+source ${COMPASS_DIR}/ci/parameter.sh
+if ! prepare_parameter $*; then
+     usage
 fi
 
+WORK_DIR=$COMPASS_DIR/ci/work
 source ${COMPASS_DIR}/ci/log.sh
-source ${COMPASS_DIR}/deploy/conf/${CONF_NAME}.conf
+source ${COMPASS_DIR}/deploy/conf/${FLAVOR}.conf
 source ${COMPASS_DIR}/deploy/prepare.sh
 source ${COMPASS_DIR}/deploy/network.sh
-
-if [[ ! -z $VIRT_NUMBER ]];then
-    source ${COMPASS_DIR}/deploy/host_vm.sh
-else
-    source ${COMPASS_DIR}/deploy/host_baremetal.sh
-fi
-
+source ${COMPASS_DIR}/deploy/host_$TYPE.sh
 source ${COMPASS_DIR}/deploy/compass_vm.sh
 source ${COMPASS_DIR}/deploy/deploy_host.sh
 
+echo $HOST_ROLES
+echo $HOSTNAMES
 ######################### main process
 
 if ! prepare_env;then
