@@ -4,7 +4,17 @@ SCRIPT_DIR=`cd ${BASH_SOURCE[0]%/*};pwd`
 WORK_DIR=$SCRIPT_DIR/work
 sudo rm -rf $WORK_DIR
 mkdir -p $WORK_DIR
-PACKAGE_URL=http://192.168.127.11:9999/xh/work/package
+#PACKAGE_URL=${PACKAGE_URL:-http://58.251.166.184/repo}
+#COMPASS_CORE=${COMPASS_CORE:-http://github.com/baigk/compass-core.git}
+#COMPASS_WEB=${COMPASS_WEB:-http://github.com/baigk/compass-web.git}
+#COMPASS_INSTALL=${COMPASS_INSTALL:-http://github.com/baigk/compass-install.git}
+#COMPASS_ADAPTERS=${COMPASS_ADAPTERS:-http://github.com/baigk/compass-adapters.git}
+
+PACKAGE_URL=${PACKAGE_URL:-http://192.168.127.11:9999/xh/work/package}
+COMPASS_CORE=${COMPASS_CORE:-http://192.168.127.11/compass-core.git}
+COMPASS_WEB=${COMPASS_WEB:-http://192.168.127.11/compass-web.git}
+COMPASS_INSTALL=${COMPASS_INSTALL:-http://192.168.127.11/compass-install.git}
+COMPASS_ADAPTERS=${COMPASS_ADAPTERS:-http://192.168.127.11/compass-adapters.git}
 
 cd $WORK_DIR
 
@@ -46,10 +56,11 @@ wget -O new/guestimg/cirros-0.3.3-x86_64-disk.img $PACKAGE_URL/cirros-0.3.3-x86_
 wget -O new/pip/pexpect-3.3.tar.gz https://pypi.python.org/packages/source/p/pexpect/pexpect-3.3.tar.gz#md5=0de72541d3f1374b795472fed841dce8
 
 cd new/compass
-git clone http://192.168.127.11/compass-core.git
-git clone http://192.168.127.11/compass-install.git
-git clone http://192.168.127.11/compass-adapters.git
-git clone http://192.168.127.11/compass-web.git
+git clone ${COMPASS_CORE}
+git clone ${COMPASS_INSTALL}
+git clone ${COMPASS_ADAPTERS}
+git clone ${COMPASS_WEB}
+
 find . -name ".git" |xargs rm -rf
 
 cd $WORK_DIR
