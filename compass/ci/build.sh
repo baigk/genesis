@@ -5,16 +5,16 @@ WORK_DIR=$SCRIPT_DIR/work
 sudo rm -rf $WORK_DIR
 mkdir -p $WORK_DIR
 #PACKAGE_URL=${PACKAGE_URL:-http://58.251.166.184/repo}
-#COMPASS_CORE=${COMPASS_CORE:-http://github.com/baigk/compass-core.git}
-#COMPASS_WEB=${COMPASS_WEB:-http://github.com/baigk/compass-web.git}
-#COMPASS_INSTALL=${COMPASS_INSTALL:-http://github.com/baigk/compass-install.git}
-#COMPASS_ADAPTERS=${COMPASS_ADAPTERS:-http://github.com/baigk/compass-adapters.git}
+COMPASS_CORE=${COMPASS_CORE:-http://github.com/baigk/compass-core.git}
+COMPASS_WEB=${COMPASS_WEB:-http://github.com/baigk/compass-web.git}
+COMPASS_INSTALL=${COMPASS_INSTALL:-http://github.com/baigk/compass-install.git}
+COMPASS_ADAPTERS=${COMPASS_ADAPTERS:-http://github.com/baigk/compass-adapters.git}
 
 PACKAGE_URL=${PACKAGE_URL:-http://192.168.127.11:9999/xh/work/package}
-COMPASS_CORE=${COMPASS_CORE:-http://192.168.127.11/compass-core.git}
-COMPASS_WEB=${COMPASS_WEB:-http://192.168.127.11/compass-web.git}
-COMPASS_INSTALL=${COMPASS_INSTALL:-http://192.168.127.11/compass-install.git}
-COMPASS_ADAPTERS=${COMPASS_ADAPTERS:-http://192.168.127.11/compass-adapters.git}
+#COMPASS_CORE=${COMPASS_CORE:-http://192.168.127.11/compass-core.git}
+#COMPASS_WEB=${COMPASS_WEB:-http://192.168.127.11/compass-web.git}
+#COMPASS_INSTALL=${COMPASS_INSTALL:-http://192.168.127.11/compass-install.git}
+#COMPASS_ADAPTERS=${COMPASS_ADAPTERS:-http://192.168.127.11/compass-adapters.git}
 
 cd $WORK_DIR
 
