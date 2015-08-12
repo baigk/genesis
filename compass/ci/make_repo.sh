@@ -8,7 +8,8 @@ CENTOS_TAG="centos7"
 OPENSTACK_TAG="juno"
 DOCKER_TAG="${UBUNTU_TAG}/openstack-${OPENSTACK_TAG}"
 DOCKER_FILE=${WORK_PATH}/${UBUNTU_TAG}/${OPENSTACK_TAG}/Dockerfile
-DEPLOY_SCRIPT_PATH="/home/chigang/code/compass4nfv/deploy/adapters/ansible/"
+DEPLOY_SCRIPT_PATH="$1"
+#DEPLOY_SCRIPT_PATH="/home/chigang/code/compass4nfv/deploy/adapters/ansible/"
 
 if [[ $UID != 0 ]]; then
     echo "You are not root user!"
@@ -44,7 +45,7 @@ fi
 apt-get install python-yaml -y
 apt-get install python-cheetah -y
 
-python gen_ins_pkg_script.py ${DEPLOY_SCRIPT_PATH} Debian Debian.tmpl
+python gen_ins_pkg_script.py ${DEPLOY_SCRIPT_PATH} Debian Debian_juno.tmpl
 
 #docker build
 docker build -t ${DOCKER_TAG} -f ${DOCKER_FILE} .
