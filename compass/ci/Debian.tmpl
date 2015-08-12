@@ -1,7 +1,10 @@
 #!/bin/bash
 set -ex
 
-sudo apt-get update
+# add openstack juno repo
+sudo apt-get update && apt-get install -y software-properties-common
+sudo add-apt-repository -y cloud-archive:juno
+
 sudo apt-get install reprepro -y
 
 #download packages
