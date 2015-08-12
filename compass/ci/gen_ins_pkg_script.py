@@ -31,14 +31,15 @@ def get_packages_name_list(file_list):
 
     return package_name_list
 
-def generate_download_script(root, arch):
+def generate_download_script(root, arch, tmpl):
     package_name_list = get_packages_name_list(get_file_list(root, arch))
 
-    tmpl = Template(file= arch + '.tmpl', searchList={'packages':package_name_list})
+    tmpl = Template(file=tmpl, searchList={'packages':package_name_list})
 
-    with open('install_' + arch + '_packages.sh', 'w') as f:
+    with open('install_packages.sh', 'w') as f:
         f.write(tmpl.respond())
 
 if __name__=='__main__':
-    generate_download_script(sys.argv[1], sys.argv[2])
+    # generate_download_script('ansible', 'Debian', 'Debian.tmpl')
+    generate_download_script(sys.argv[1], sys.argv[2], sys.argv[3])
 
