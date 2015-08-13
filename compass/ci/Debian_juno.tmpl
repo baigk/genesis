@@ -21,13 +21,16 @@ sudo apt-get -d install $pkg -y
 #end for
 
 #make repo
-mkdir repo repo/conf
-cat <<EOF > repo/conf/distributions
+mkdir -p trusty-juno-ppa/conf
+cat <<EOF > trusty-juno-ppa/conf/distributions
 Codename: trusty
 Components: main
 Architectures: amd64
 EOF
 
-reprepro -b repo includedeb trusty /var/cache/apt/archives/*.deb
+mkdir deb
+find /var/cache/apt/ -name *.deb | xargs -i cp {} deb
 
-tar -zcvf /trusty-juno-ppa.tar.gz ./repo
+reprepro -b trusty-juno-ppa includedeb trusty deb/*.deb
+
+tar -zcvf /trusty-juno-ppa.tar.gz ./trusty-juno-ppa

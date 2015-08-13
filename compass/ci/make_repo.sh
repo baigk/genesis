@@ -41,16 +41,14 @@ if [[ -e ${WORK_PATH}/install_packeages.sh ]]; then
     rm -f ${WORK_PATH}/install_packages.sh
 fi
 
-#generate install_packages.sh
+#make ubuntu 14.04 ppa
 apt-get install python-yaml -y
 apt-get install python-cheetah -y
 
 python gen_ins_pkg_script.py ${DEPLOY_SCRIPT_PATH} Debian Debian_juno.tmpl
 
-#docker build
 docker build -t ${DOCKER_TAG} -f ${DOCKER_FILE} .
 
-#docker run
 mkdir -p ${REPO_PATH}
 docker run -t -v ${REPO_PATH}:/result ${DOCKER_TAG}
 
@@ -64,6 +62,10 @@ docker rmi -f ${IMAGE_ID}
 
 #mkdir -p ${REPO_PATH}
 #docker run -t -v ${REPO_PATH}:/result ${DOCKER_TAG}
+
+if [[ -e ${WORK_PATH}/install_packages.sh ]]; then
+    rm -f ${WORK_PATH}/install_packages.sh
+fi
 
 if [[ -e ${WORK_PATH}/cp_repo.sh ]]; then
     rm -f ${WORK_PATH}/cp_repo.sh
