@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM ubuntu:14.04.3
 MAINTAINER Chigang(Justin) <chigang@huawei.com>
 
 # TODO: Is there some easy way to get the fastest/closest mirror?
